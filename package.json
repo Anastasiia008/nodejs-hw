@@ -8,12 +8,13 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
-    "globals": "^17.13.0",
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.12.0",
+    "celebrate": "^16.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "eslint": "^10.12.0",
     "express": "^5.1.0",
+    "globals": "^17.13.0",
     "http-errors": "^2.0.0",
     "mongoose": "^8.9.0",
     "pino": "^9.5.0",
