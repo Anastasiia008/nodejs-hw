@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
+import { isValidObjectId } from 'mongoose';
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
@@ -45,12 +46,22 @@ export const loginUser = async (req, res) => {
 export const refreshUserSession = async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
 
+  if (!sessionId || !isValidObjectId(sessionId)) {
+    throw createHttpError(401, 'Session not found');
+  }
+
   const session = await Session.findOne({ _id: sessionId, refreshToken });
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
 
   if (new Date() > new Date(session.refreshTokenValidUntil)) {
+    await Session.deleteOne({ _id: sessionId, refreshToken });
+
+    res.clearCookie('sessionId');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
     throw createHttpError(401, 'Session token expired');
   }
 
